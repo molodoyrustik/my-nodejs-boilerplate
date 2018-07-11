@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import mongoose from 'mongoose';
 import { AsyncRouter } from 'express-async-router';
-import Auth from './Auth';
+import Auth from '../../resourses/Auth/Auth';
 
 
 export default (ctx) => {

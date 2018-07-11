@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { AsyncRouter } from 'express-async-router';
 import expressJwt from 'express-jwt';
-import getAuth from './auth';
+import getAuth from './auth/auth';
 
 export default (ctx) => {
 	const api = AsyncRouter();

@@ -1,8 +1,12 @@
-# Include your project-specific ignores in this file
-# Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
-
-coverage
-dist
-docs/dist
-node_modules
-npm-debug.log
+.DS_Store
+/project/node_modules
+/project/build
+tmp
+*.tmp
+*.log
+runtime/logs/*
+!runtime/logs/index.html
+runtime/tmp/*
+!runtime/tmp/index.html
+.lock
+/**/*.lock

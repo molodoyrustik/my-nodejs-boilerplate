@@ -1,10 +1,10 @@
 import bunyan from 'bunyan';
 import express from 'express';
 import mongoose from 'mongoose';
-import getMiddlewares from './middlewares';
-import getModels from './models';
-import getResourses from './resourses';
-import getApi from './api';
+import getMiddlewares from './middlewares/index';
+import getModels from './models/index';
+import getResourses from './resourses/index';
+import getApi from './api/api';
 
 export default class App {
   constructor(params = {}) {

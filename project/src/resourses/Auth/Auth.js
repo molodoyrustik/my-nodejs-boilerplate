@@ -23,13 +23,22 @@ export default (ctx) => {
   }
 
   resourse.validationUserFields = function(userFields, res) {
+    let valid = {
+      isValid: false,
+      message: []
+    }
+
     if(!userFields.captcha) {
-      res.status(400).json([{signup: false, message: 'Параметр captcha не передан или введен неверно'}]);
+      valid.isValid = true;
+      valid.message = [{signup: false, message: 'Параметр captcha не передан или введен неверно'}]
     }
 
     if(!userFields.email || !userFields.password) {
-      res.status(400).json([{signup: false, message: 'Параметрs email или password не передан'}]);
+      valid.isValid = true;
+      valid.message = [{signup: false, message: 'Параметрs email или password не передан'}]
     }
+
+    return valid;
   }
 
   resourse.getUserCriteria = function (req, res) {
@@ -45,7 +54,10 @@ export default (ctx) => {
   resourse.signup = async function (req, res) {
     try {
       const userFields = resourse.getUserFields(req, res);
-      resourse.validationUserFields(userFields, res);
+      const valid = resourse.validationUserFields(userFields, res);
+      if (valid.isValid) {
+        return res.status(400).json(valid.message);
+      }
       const criteria = resourse.getUserCriteria(req, res);
 
       const existUser = await User.findOne(criteria)
