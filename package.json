@@ -4,6 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "nodemon": "cd project && npm run build && cd ../ && pm2 start apps.pm2.json --env production"
+    "start": "cd project && npm run build && cd ../ && pm2 start apps.pm2.json --env production"
   }
 }
