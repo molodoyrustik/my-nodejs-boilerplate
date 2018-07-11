@@ -2,7 +2,7 @@
   "apps":[
     {
       "name": "www",
-      "script": "./project/server.js",
+      "script": "./project/dist/index.js",
       "cwd": "./project",
       "error_file": "../runtime/logs/node.error.log",
       "pid_file": "../runtime/tmp/landing.pid",
