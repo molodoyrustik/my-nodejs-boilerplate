@@ -17,6 +17,11 @@ export default (ctx) => {
       index: { unique: true },
       trim: true,
     },
+    id: {
+      type: String,
+      index: { unique: true},
+      trim: true,
+    },
     password: {
       type: String,
     }

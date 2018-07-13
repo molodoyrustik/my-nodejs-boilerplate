@@ -1,4 +1,5 @@
 import jwt from 'express-jwt'
+import uniqid from 'uniqid';
 
 export function canonize(str) {
   return str.toLowerCase().trim()
@@ -9,13 +10,17 @@ export default (ctx) => {
   const resourse = {}
 
   resourse.validate = async function (req, res) {
-    const user = await User.findById(req.user._id)
-    if (!user) return res.status(404).json([{signup: false, message: 'Не найден user в базе'}]);
-    return {
-      __pack: 1,
-      jwt: req.user,
-      user: user,
+    if(req.user) {
+      const user = await User.findById(req.user._id)
+      if (!user) return res.status(404).json([{validate: false, message: 'Пользователь не найден в базе'}]);
+      return {
+        validate: true,
+        __pack: 1,
+        jwt: req.user,
+        user: user,
+      }
     }
+    return res.status(404).json([{validate: false, message: 'Пользователь не найден в базе'}]);
   }
 
   resourse.getUserFields = function (req) {
@@ -61,9 +66,9 @@ export default (ctx) => {
       const criteria = resourse.getUserCriteria(req, res);
 
       const existUser = await User.findOne(criteria)
-      if (existUser) return res.status(400).json([{signup: false, message: 'Username with this email is registered'}])
+      if (existUser) return res.status(400).json([{signup: false, message: 'Такой email зарегистрирован'}])
 
-      const user = new User(userFields)
+      const user = new User({...userFields, id: uniqid()})
       await user.save()
 
       const result = [{
@@ -81,20 +86,21 @@ export default (ctx) => {
   }
 
   resourse.login = async function (req, res) {
-    const params = resourse.getUserFields(req, res)
-    if (!params.password) return res.status(400).send('Параметр password не передан')
+    const params = resourse.getUserFields(req, res);
+    if (!params.password) return res.status(400).json([{login: false, message: 'Параметр password не передан'}]);
 
-    const criteria = resourse.getUserCriteria(req)
-    const user = await User.findOne(criteria)
+    const criteria = resourse.getUserCriteria(req);
+    const user = await User.findOne(criteria);
 
-    if (!user) return res.status(404).send('Такой пользователь не найден')
+    if (!user) return res.status(404).json([{login: false, message: 'Такой пользователь не найден'}]);
 
     if (!await user.verifyPassword(params.password)) {
-      return res.status(400).send('Переданный пароль не подходит')
+      return res.status(400).json([{login: false, message: 'Переданный пароль не подходит'}]);
     }
 
     return res.json({
       __pack: 1,
+      login: true,
       user,
       token: user.generateAuthToken(),
     })
