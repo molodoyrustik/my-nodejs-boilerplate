@@ -1,10 +1,13 @@
 import bunyan from 'bunyan';
 import express from 'express';
 import mongoose from 'mongoose';
+import nodemailer from 'nodemailer';
+import smtpTransport from 'nodemailer-smtp-transport';
 import getMiddlewares from './middlewares/index';
 import getModels from './models/index';
 import getResourses from './resourses/index';
 import getApi from './api/api';
+
 
 export default class App {
   constructor(params = {}) {
@@ -43,7 +46,9 @@ export default class App {
 
   init() {
     this.log.trace('App init');
-
+    const transporter = nodemailer.createTransport(smtpTransport(this.config.nodemailer));
+    this.transporter = transporter;
+    
     this.app = express();
     this.db = this.getDatabase();
     this.middlewares = this.getMiddlewares();
@@ -56,6 +61,8 @@ export default class App {
     this.useMiddlewares();
     this.useRoutes();
     this.useDefaultRoute();
+
+
   }
 
   useMiddlewares() {

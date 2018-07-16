@@ -1,5 +1,6 @@
 import jwt from 'express-jwt'
 import uniqid from 'uniqid';
+import crypto from 'crypto';
 
 export function canonize(str) {
   return str.toLowerCase().trim()
@@ -7,6 +8,9 @@ export function canonize(str) {
 
 export default (ctx) => {
   const User = ctx.models.User
+  const Token = ctx.models.Token
+  const transporter = ctx.transporter;
+
   const resourse = {}
 
   resourse.validate = async function (req, res) {
@@ -70,6 +74,8 @@ export default (ctx) => {
 
       const user = new User({...userFields, id: uniqid()})
       await user.save()
+      const userToken = new Token({ userID: user.id , id: uniqid(), forgotEmailToken: '' })
+      await userToken.save();
 
       const result = [{
         signup: true,
@@ -98,13 +104,92 @@ export default (ctx) => {
       return res.status(400).json([{login: false, message: 'Переданный пароль не подходит'}]);
     }
 
-    return res.json({
+    return res.json([{
       __pack: 1,
       login: true,
       user,
       token: user.generateAuthToken(),
-    })
+    }])
   }
+
+  resourse.forgot = async function (req, res) {
+    const params = resourse.getUserFields(req, res);
+
+    if (!params.email) return res.status(400).json([{ forgot: false, message: 'Параметр email не передан' }]);
+    if (!params.captcha) return res.status(400).json([{ forgot: false, message: 'Параметр captcha не передан' }]);
+
+    const criteria = resourse.getUserCriteria(req);
+    const user = await User.findOne(criteria);
+
+    if (!user) return res.status(404).json([{login: false, message: 'Пользователь с таким email не найден в базе'}]);
+
+    const token = await crypto.randomBytes(32);
+    const userToken = await Token.findOne({userID: user.id})
+    userToken.forgotEmailToken = token.toString('hex');
+    await userToken.save();
+
+
+    let mailText = `Перейдите по ссылке чтобы изменить пароль http://localhost:3000/auth/forgot/${userToken.forgotEmailToken}`;
+
+    var mailOptions = {
+      from: 'molodoyrustik@mail.ru',
+      to: user.email,
+      subject: 'Восстановления пароля сайта Ashile.io',
+      text: mailText
+    };
+
+    await transporter.sendMail(mailOptions);
+    const result = [{
+      __pack: 1,
+      forgot: true,
+      tokenModel:  userToken,
+    }];
+    return res.json(result);
+  }
+
+  resourse.checkForgotToken = async function (req, res) {
+    const { forgotEmailToken } = req.params;
+    if (!forgotEmailToken) {
+      return res.status(400).json([{checkForgotToken: false, message: 'Токен не был передан'}]);
+    }
+
+    const criteria = { forgotEmailToken };
+    const userToken = await Token.findOne(criteria);
+
+    if (!userToken) return res.status(404).json([{checkForgotToken: false, message: 'Пользователь с таким токеном не найден'}]);
+
+    return res.json([{
+        __pack: 1,
+        checkForgotToken: true,
+        tokenModel: userToken,
+    }]);
+  }
+
+  resourse.reset = async function (req, res) {
+    const params = resourse.getUserFields(req, res);
+    const { password, checkPassword, captcha, userID, } = params;
+
+    if (!password) return res.status(400).json([{reset: false, message: 'Параметр password не передан'}]);
+    if (!checkPassword) return res.status(400).json([{reset: false, message: 'Параметр checkPassword не передан'}]);
+    if (password !== checkPassword) return res.status(400).json([{reset: false, message: 'Пароли не совпадают'}]);
+    if (!captcha) return res.status(400).json([{reset: false, message: 'Параметр captcha не передан'}]);
+    if (!userID) return res.status(400).json([{reset: false, message: 'Параметр userID не передан'}]);
+
+    const user = await User.findOne({id: userID});
+    if (!user) return res.status(404).json([{reset: false, message: 'Такой пользователь не найден'}]);
+    user.password = password;
+    await user.save();
+
+
+
+    return res.json([{
+      __pack: 1,
+      reset: true,
+      user,
+    }])
+  }
+
+
 
   resourse.getToken = function (req) {
     console.log(req.headers)

@@ -11,4 +11,12 @@ export default {
   jwt: {
     secret: 'YOUR_SECRET',
   },
+  nodemailer: {
+    service: 'mail',
+    host: 'smtp.mail.ru',
+    auth: {
+      user: 'molodoyrustik@mail.ru',
+      pass: 'molodoy'
+    }
+  },
 };
