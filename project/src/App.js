@@ -33,7 +33,7 @@ export default class App {
   getDatabase() {
     return {
       run: () => {
-        new Promise((resolve) => {
+        new Promise((resolve, reject) => {
           mongoose.connect(this.config.db.url);
           resolve();
         });
@@ -48,7 +48,7 @@ export default class App {
     this.log.trace('App init');
     const transporter = nodemailer.createTransport(smtpTransport(this.config.nodemailer));
     this.transporter = transporter;
-    
+
     this.app = express();
     this.db = this.getDatabase();
     this.middlewares = this.getMiddlewares();

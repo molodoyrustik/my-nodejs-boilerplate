@@ -54,7 +54,7 @@ export default (ctx) => {
 
   const SALT_WORK_FACTOR = 10
   schema.pre('save', function (next) {
-    if (!this.isModified('password')) return next()
+    if (!this.isModified('password')) return next();
     return bcryptGenSalt(SALT_WORK_FACTOR)
     .then(salt => {
       bcryptHash(this.password, salt)

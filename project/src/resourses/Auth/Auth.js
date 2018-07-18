@@ -72,7 +72,7 @@ export default (ctx) => {
       const existUser = await User.findOne(criteria)
       if (existUser) return res.status(400).json([{signup: false, message: 'Такой email зарегистрирован'}])
 
-      const user = new User({...userFields, id: uniqid()})
+      const user = new User({ ...userFields, id: uniqid() })
       await user.save()
       const userToken = new Token({ userID: user.id , id: uniqid(), forgotEmailToken: '' })
       await userToken.save();
@@ -137,12 +137,11 @@ export default (ctx) => {
       subject: 'Восстановления пароля сайта Ashile.io',
       text: mailText
     };
-
     await transporter.sendMail(mailOptions);
+
     const result = [{
       __pack: 1,
-      forgot: true,
-      tokenModel:  userToken,
+      forgot: true
     }];
     return res.json(result);
   }
@@ -160,39 +159,39 @@ export default (ctx) => {
 
     return res.json([{
         __pack: 1,
-        checkForgotToken: true,
-        tokenModel: userToken,
+        checkForgotToken: true
     }]);
   }
 
   resourse.reset = async function (req, res) {
     const params = resourse.getUserFields(req, res);
-    const { password, checkPassword, captcha, userID, } = params;
+    const { password, checkPassword, captcha, forgotEmailToken, } = params;
 
     if (!password) return res.status(400).json([{reset: false, message: 'Параметр password не передан'}]);
     if (!checkPassword) return res.status(400).json([{reset: false, message: 'Параметр checkPassword не передан'}]);
     if (password !== checkPassword) return res.status(400).json([{reset: false, message: 'Пароли не совпадают'}]);
     if (!captcha) return res.status(400).json([{reset: false, message: 'Параметр captcha не передан'}]);
-    if (!userID) return res.status(400).json([{reset: false, message: 'Параметр userID не передан'}]);
+    if (!forgotEmailToken) return res.status(400).json([{reset: false, message: 'Параметр forgotEmailToken не передан'}]);
+
+    const criteria = { forgotEmailToken };
+    const userToken = await Token.findOne(criteria);
+    if (!userToken) return res.status(404).json([{reset: false, message: 'Не корректный токен'}]);
+    const { userID } = userToken;
+    userToken.forgotEmailToken = '';
+    await userToken.save();
 
     const user = await User.findOne({id: userID});
     if (!user) return res.status(404).json([{reset: false, message: 'Такой пользователь не найден'}]);
     user.password = password;
     await user.save();
 
-
-
     return res.json([{
       __pack: 1,
-      reset: true,
-      user,
+      reset: true
     }])
   }
 
-
-
   resourse.getToken = function (req) {
-    console.log(req.headers)
     if (req.headers.authorization && req.headers.authorization.split( ' ' )[ 0 ] === 'Bearer') {
       return req.headers.authorization.split( ' ' )[ 1 ]
     } else if (req.headers['x-access-token']) {
