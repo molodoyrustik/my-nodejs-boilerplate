@@ -1,14 +1,16 @@
 import jwt from 'express-jwt'
 import uniqid from 'uniqid';
 import crypto from 'crypto';
+import mongoose from 'mongoose';
 
 export function canonize(str) {
   return str.toLowerCase().trim()
 }
 
 export default (ctx) => {
-  const User = ctx.models.User
-  const Token = ctx.models.Token
+  const User = ctx.models.User;
+  const Token = ctx.models.Token;
+  const Domain = ctx.models.Domain;
   const transporter = ctx.transporter;
 
   const resourse = {}
@@ -72,7 +74,9 @@ export default (ctx) => {
       const existUser = await User.findOne(criteria)
       if (existUser) return res.status(400).json([{signup: false, message: 'Такой email зарегистрирован'}])
 
-      const user = new User({ ...userFields, id: uniqid() })
+      const user = new User({ ...userFields, id: uniqid()})
+
+      user.domains.push();
       await user.save()
       const userToken = new Token({ userID: user.id , id: uniqid(), forgotEmailToken: '' })
       await userToken.save();
@@ -99,6 +103,10 @@ export default (ctx) => {
     const user = await User.findOne(criteria);
 
     if (!user) return res.status(404).json([{login: false, message: 'Такой пользователь не найден'}]);
+
+    const domain = new Domain({id: uniqid(), url: 'http://example.com' });
+    user.domains.push(domain);
+    await user.save();
 
     if (!await user.verifyPassword(params.password)) {
       return res.status(400).json([{login: false, message: 'Переданный пароль не подходит'}]);

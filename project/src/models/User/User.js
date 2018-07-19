@@ -7,6 +7,8 @@ const bcryptHash = Promise.promisify(bcrypt.hash)
 const bcryptCompare = Promise.promisify(bcrypt.compare)
 import mongoose from 'mongoose'
 
+import { DomainSchema } from '../Domain/Domain';
+
 export default (ctx) => {
   if (!ctx.log) throw '!log'
 
@@ -24,7 +26,8 @@ export default (ctx) => {
     },
     password: {
       type: String,
-    }
+    },
+    domains: [DomainSchema]
   }, {
     collection: 'user',
     timestamps: true,
@@ -41,7 +44,7 @@ export default (ctx) => {
     return _.omit(this.toObject(), ['password'])
   }
   schema.methods.getIdentity = function (params) {
-    const object = _.pick(this.toObject(), ['_id', 'email', 'captcha'])
+    const object = _.pick(this.toObject(), ['_id', 'email', 'id'])
     if (!params) return object
     return Object.assign(object, params)
   }

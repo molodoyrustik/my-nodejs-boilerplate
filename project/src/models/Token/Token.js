@@ -23,7 +23,6 @@ export default (ctx) => {
     },
     forgotEmailToken: {
       type: String,
-      index: { unique: true},
       trim: true,
     },
   }, {
