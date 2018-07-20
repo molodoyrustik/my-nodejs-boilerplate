@@ -14,7 +14,7 @@ export default (ctx) => {
 
   api.get('/', ctx.resourses.DomainController.domains);
   api.post('/create', ctx.resourses.DomainController.create);
-  api.delete('/delete', ctx.resourses.DomainController.delete);
+  api.delete('/delete/:id', ctx.resourses.DomainController.delete);
   api.put('/edit', ctx.resourses.DomainController.edit);
 
 	return api;

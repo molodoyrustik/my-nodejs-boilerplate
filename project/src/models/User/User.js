@@ -7,10 +7,14 @@ const bcryptHash = Promise.promisify(bcrypt.hash)
 const bcryptCompare = Promise.promisify(bcrypt.compare)
 import mongoose from 'mongoose'
 
-import { DomainSchema } from '../Domain/Domain';
+import obj from '../Domain/Domain';
+
+
 
 export default (ctx) => {
   if (!ctx.log) throw '!log'
+
+  const DomainSchema = obj.DomainSchema;
 
   const schema = new mongoose.Schema({
     email: {

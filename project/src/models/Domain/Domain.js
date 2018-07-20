@@ -11,12 +11,9 @@ const DomainSchema = new mongoose.Schema({
     type: String,
     trim: true,
   }
-
 })
 
-exports.DomainSchema = DomainSchema;
-
-export default (ctx) => {
-
-  return mongoose.model('Domain', DomainSchema)
+export default {
+  Domain: mongoose.model('Domain', DomainSchema),
+  DomainSchema: DomainSchema
 }

@@ -50,11 +50,11 @@ export default (ctx) => {
   }
 
   resourse.delete = async function(req, res) {
-    const params = req.body
-    if (!params.id) {
+
+    if (!req.params.id) {
       return res.status(400).json([{signup: false, message: 'Id домена не передан'}]);
     }
-    const { id } = params;
+    const { id } = req.params;
 
     const userID = req.user.id;
     const user = await User.findOne({id: userID});

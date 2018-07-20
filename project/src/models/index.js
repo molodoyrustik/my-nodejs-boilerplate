@@ -1,16 +1,16 @@
 import User from './User/User.js';
 import Token from './Token/Token.js';
-import Domain, { DomainSchema } from './Domain/Domain';
+import DomainObject from './Domain/Domain';
 
 
 
 export default function () {
   return {
-    Domain: Domain(...arguments),
+    Domain: DomainObject.Domain(...arguments),
     User: User(...arguments),
     Token: Token(...arguments),
     scheme: {
-      DomainSchema: DomainSchema,
+      DomainSchema: DomainObject.DomainSchema,
     }
   }
 }
