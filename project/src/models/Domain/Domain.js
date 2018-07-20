@@ -13,7 +13,4 @@ const DomainSchema = new mongoose.Schema({
   }
 })
 
-export default {
-  Domain: mongoose.model('Domain', DomainSchema),
-  DomainSchema: DomainSchema
-}
+export default DomainSchema

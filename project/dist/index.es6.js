@@ -191,18 +191,11 @@ var DomainSchema = new mongoose.Schema({
   }
 });
 
-var obj = {
-  Domain: mongoose.model('Domain', DomainSchema),
-  DomainSchema: DomainSchema
-};
-
 var bcryptGenSalt = Promise.promisify(bcrypt.genSalt);
 var bcryptHash = Promise.promisify(bcrypt.hash);
 var bcryptCompare = Promise.promisify(bcrypt.compare);
 var User = (function (ctx) {
   if (!ctx.log) throw '!log';
-
-  var DomainSchema = obj.DomainSchema;
 
   var schema = new mongoose.Schema({
     email: {
@@ -315,13 +308,19 @@ var Token = (function (ctx) {
   return mongoose.model('Token', schema);
 });
 
+var Domain = (function (ctx) {
+  if (!ctx.log) throw '!log';
+
+  return mongoose.model('Domain', DomainSchema);
+});
+
 var _getModels = function () {
   return {
-    Domain: obj.Domain.apply(obj, arguments),
+    Domain: Domain.apply(undefined, arguments),
     User: User.apply(undefined, arguments),
     Token: Token.apply(undefined, arguments),
     scheme: {
-      DomainSchema: obj.DomainSchema
+      DomainSchema: DomainSchema
     }
   };
 };
