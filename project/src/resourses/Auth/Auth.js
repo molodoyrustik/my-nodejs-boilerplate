@@ -19,12 +19,12 @@ export default (ctx) => {
     if(req.user) {
       const user = await User.findById(req.user._id)
       if (!user) return res.status(404).json([{validate: false, message: 'Пользователь не найден в базе'}]);
-      return {
+      return [{
         validate: true,
         __pack: 1,
         jwt: req.user,
         user: user,
-      }
+      }]
     }
     return res.status(404).json([{validate: false, message: 'Пользователь не найден в базе'}]);
   }
@@ -76,7 +76,7 @@ export default (ctx) => {
 
       const user = new User({ ...userFields, id: uniqid()})
 
-      user.domains.push();
+
       await user.save()
       const userToken = new Token({ userID: user.id , id: uniqid(), forgotEmailToken: '' })
       await userToken.save();
@@ -103,9 +103,6 @@ export default (ctx) => {
     const user = await User.findOne(criteria);
 
     if (!user) return res.status(404).json([{login: false, message: 'Такой пользователь не найден'}]);
-
-    const domain = new Domain({id: uniqid(), url: 'http://example.com' });
-    user.domains.push(domain);
     await user.save();
 
     if (!await user.verifyPassword(params.password)) {

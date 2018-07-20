@@ -10,7 +10,7 @@ export default (ctx) => {
   api.all('/', () => ({ok: true, version: '1.0.1'}))
 
   api.use('/auth', getAuth(ctx));
-	api.use('/dashboard', expressJwt({secret: ctx.config.jwt.secret}), getDomain(ctx));
+	api.use('/domains', expressJwt({secret: ctx.config.jwt.secret}), getDomain(ctx));
 
 
 	// api.all('/protected', expressJwt({secret: ctx.config.jwt.secret}), (req, res, next) => {
