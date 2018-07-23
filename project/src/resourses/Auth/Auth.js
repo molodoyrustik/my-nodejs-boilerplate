@@ -17,7 +17,7 @@ export default (ctx) => {
 
   resourse.validate = async function (req, res) {
     if(req.user) {
-      const user = await User.findById(req.user._id)
+      const user = await User.findOne({id: req.user.id})
       if (!user) return res.status(404).json([{validate: false, message: 'Пользователь не найден в базе'}]);
       return [{
         validate: true,
