@@ -33,7 +33,7 @@ export default class App {
   getDatabase() {
     return {
       run: () => {
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
           mongoose.connect(this.config.db.url);
           resolve();
         });
@@ -61,11 +61,10 @@ export default class App {
     this.useMiddlewares();
     this.useRoutes();
     this.useDefaultRoute();
-
-
   }
 
   useMiddlewares() {
+    this.app.use(this.middlewares.catchError);
     this.app.use(this.middlewares.reqLog);
     this.app.use(this.middlewares.accessLogger);
     this.app.use(this.middlewares.reqParser);

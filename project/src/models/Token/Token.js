@@ -13,12 +13,10 @@ export default (ctx) => {
   const schema = new mongoose.Schema({
     id: {
       type: String,
-      index: { unique: true},
       trim: true,
     },
     userID: {
       type: String,
-      index: { unique: true},
       trim: true,
     },
     forgotEmailToken: {

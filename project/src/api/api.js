@@ -12,14 +12,9 @@ export default (ctx) => {
   api.use('/auth', getAuth(ctx));
 	api.use('/domains', expressJwt({secret: ctx.config.jwt.secret}), getDomain(ctx));
 
-
-	// api.all('/protected', expressJwt({secret: ctx.config.jwt.secret}), (req, res, next) => {
-	// 	return req.user;
-	// })
-	// api.all('/domains', expressJwt({secret: ctx.config.jwt.secret}), (req, res, next) => {
-	// 	return req.user.domains;
-	// })
-
+	api.use('/domains',(function(err, req, res, next) {
+		return res.status(401).json([{flag: false, message: 'Неправильный токен'}]);
+	}))
 
 	return api;
 }

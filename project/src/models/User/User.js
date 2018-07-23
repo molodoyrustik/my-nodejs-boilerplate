@@ -16,12 +16,10 @@ export default (ctx) => {
     email: {
       type: String,
       required: true,
-      index: { unique: true },
       trim: true,
     },
     id: {
       type: String,
-      index: { unique: true},
       trim: true,
     },
     password: {

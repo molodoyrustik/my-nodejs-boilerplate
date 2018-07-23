@@ -64,5 +64,22 @@ export default (ctx) => {
     return res.json([{ flag: true, message: 'Домен успешно удален'}]);
   }
 
+  resourse.logs = async function(req, res) {
+    if (!req.params.domainId) {
+      return res.status(400).json([{signup: false, message: 'Id домена не передан'}]);
+    }
+    const { domainId } = req.params;
+    const userID = req.user.id;
+
+    const user = await User.findOne({id: userID});
+    if (!user) {
+      return res.status(400).json([{signup: false, message: 'Пользователь не найден'}]);
+    }
+    const domain = user.domains.find((domain) => (domain.id === domainId));
+    const { logs } = domain;
+
+    return res.json([{ flag: true, logs }]);
+  }
+
   return resourse
 }

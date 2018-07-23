@@ -184,16 +184,23 @@ var _getMiddlewares = function (ctx) {
   };
 };
 
+var LogSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    trim: true
+  }
+});
+
 var DomainSchema = new mongoose.Schema({
   id: {
     type: String,
-    index: { unique: true },
     trim: true
   },
   url: {
     type: String,
     trim: true
-  }
+  },
+  logs: [LogSchema]
 });
 
 var bcryptGenSalt = Promise.promisify(bcrypt.genSalt);
@@ -206,12 +213,10 @@ var User = (function (ctx) {
     email: {
       type: String,
       required: true,
-      index: { unique: true },
       trim: true
     },
     id: {
       type: String,
-      index: { unique: true },
       trim: true
     },
     password: {
@@ -293,12 +298,10 @@ var Token = (function (ctx) {
   var schema = new mongoose.Schema({
     id: {
       type: String,
-      index: { unique: true },
       trim: true
     },
     userID: {
       type: String,
-      index: { unique: true },
       trim: true
     },
     forgotEmailToken: {
@@ -1026,6 +1029,56 @@ var DomainController = (function (ctx) {
     };
   }();
 
+  resourse.logs = function () {
+    var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee5(req, res) {
+      var domainId, userID, user, domain, logs;
+      return _regeneratorRuntime.wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              if (req.params.domainId) {
+                _context5.next = 2;
+                break;
+              }
+
+              return _context5.abrupt('return', res.status(400).json([{ signup: false, message: 'Id домена не передан' }]));
+
+            case 2:
+              domainId = req.params.domainId;
+              userID = req.user.id;
+              _context5.next = 6;
+              return User.findOne({ id: userID });
+
+            case 6:
+              user = _context5.sent;
+
+              if (user) {
+                _context5.next = 9;
+                break;
+              }
+
+              return _context5.abrupt('return', res.status(400).json([{ signup: false, message: 'Пользователь не найден' }]));
+
+            case 9:
+              domain = user.domains.find(function (domain) {
+                return domain.id === domainId;
+              });
+              logs = domain.logs;
+              return _context5.abrupt('return', res.json([{ flag: true, logs: logs }]));
+
+            case 12:
+            case 'end':
+              return _context5.stop();
+          }
+        }
+      }, _callee5, this);
+    }));
+
+    return function (_x9, _x10) {
+      return _ref5.apply(this, arguments);
+    };
+  }();
+
   return resourse;
 });
 
@@ -1060,6 +1113,7 @@ var getDomain = (function (ctx) {
   if (!_.has(ctx, 'resourses.DomainController.create')) throw '!resourses.DomainController.create';
   if (!_.has(ctx, 'resourses.DomainController.delete')) throw '!resourses.DomainController.delete';
   if (!_.has(ctx, 'resourses.DomainController.edit')) throw '!resourses.DomainController.edit';
+  if (!_.has(ctx, 'resourses.DomainController.edit')) throw '!resourses.DomainController.logs';
 
   var api = expressAsyncRouter.AsyncRouter();
 
@@ -1067,6 +1121,7 @@ var getDomain = (function (ctx) {
   api.post('/create', ctx.resourses.DomainController.create);
   api.delete('/delete/:id', ctx.resourses.DomainController.delete);
   api.put('/edit', ctx.resourses.DomainController.edit);
+  api.get('/:domainId/logs', ctx.resourses.DomainController.logs);
 
   return api;
 });
@@ -1081,13 +1136,9 @@ var getApi = (function (ctx) {
 	api.use('/auth', getAuth(ctx));
 	api.use('/domains', jwt$1({ secret: ctx.config.jwt.secret }), getDomain(ctx));
 
-	// api.all('/protected', expressJwt({secret: ctx.config.jwt.secret}), (req, res, next) => {
-	// 	return req.user;
-	// })
-	// api.all('/domains', expressJwt({secret: ctx.config.jwt.secret}), (req, res, next) => {
-	// 	return req.user.domains;
-	// })
-
+	api.use('/domains', function (err, req, res, next) {
+		return res.status(401).json([{ flag: false, message: 'Неправильный токен' }]);
+	});
 
 	return api;
 });
@@ -1129,7 +1180,7 @@ var App = function () {
 
       return {
         run: function run() {
-          new _Promise(function (resolve, reject) {
+          new _Promise(function (resolve) {
             mongoose.connect(_this.config.db.url);
             resolve();
           });
@@ -1164,6 +1215,7 @@ var App = function () {
   }, {
     key: 'useMiddlewares',
     value: function useMiddlewares() {
+      this.app.use(this.middlewares.catchError);
       this.app.use(this.middlewares.reqLog);
       this.app.use(this.middlewares.accessLogger);
       this.app.use(this.middlewares.reqParser);

@@ -9,6 +9,7 @@ export default (ctx) => {
   if (!_.has(ctx, 'resourses.DomainController.create')) throw '!resourses.DomainController.create'
   if (!_.has(ctx, 'resourses.DomainController.delete')) throw '!resourses.DomainController.delete'
   if (!_.has(ctx, 'resourses.DomainController.edit')) throw '!resourses.DomainController.edit'
+  if (!_.has(ctx, 'resourses.DomainController.edit')) throw '!resourses.DomainController.logs'
 
 	const api = AsyncRouter();
 
@@ -16,6 +17,7 @@ export default (ctx) => {
   api.post('/create', ctx.resourses.DomainController.create);
   api.delete('/delete/:id', ctx.resourses.DomainController.delete);
   api.put('/edit', ctx.resourses.DomainController.edit);
+  api.get('/:domainId/logs', ctx.resourses.DomainController.logs);
 
 	return api;
 }
