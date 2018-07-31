@@ -6,8 +6,10 @@ const bcryptGenSalt = Promise.promisify(bcrypt.genSalt)
 const bcryptHash = Promise.promisify(bcrypt.hash)
 const bcryptCompare = Promise.promisify(bcrypt.compare)
 import mongoose from 'mongoose'
+import uniqid from 'uniqid';
 
-import DomainSchema from '../Domain/Domain';
+import DomainSchema from '../Domain/DomainSchema';
+import ChannelSchema from '../Channel/ChannelSchema';
 
 export default (ctx) => {
   if (!ctx.log) throw '!log'
@@ -25,7 +27,8 @@ export default (ctx) => {
     password: {
       type: String,
     },
-    domains: [DomainSchema]
+    domains: [DomainSchema],
+    channels: [ChannelSchema],
   }, {
     collection: 'user',
     timestamps: true,

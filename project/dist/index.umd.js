@@ -1,8 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('babel-runtime/regenerator'), require('babel-runtime/helpers/asyncToGenerator'), require('babel-runtime/core-js/object/keys'), require('babel-runtime/core-js/promise'), require('babel-runtime/core-js/object/assign'), require('babel-runtime/helpers/classCallCheck'), require('babel-runtime/helpers/createClass'), require('bunyan'), require('express'), require('mongoose'), require('nodemailer'), require('nodemailer-smtp-transport'), require('babel-runtime/core-js/json/stringify'), require('left-pad'), require('cookie-parser'), require('body-parser'), require('cors'), require('uuid'), require('lodash'), require('jsonwebtoken'), require('bcryptjs'), require('bluebird'), require('babel-runtime/helpers/extends'), require('express-jwt'), require('uniqid'), require('crypto'), require('express-async-router')) :
-	typeof define === 'function' && define.amd ? define(['babel-runtime/regenerator', 'babel-runtime/helpers/asyncToGenerator', 'babel-runtime/core-js/object/keys', 'babel-runtime/core-js/promise', 'babel-runtime/core-js/object/assign', 'babel-runtime/helpers/classCallCheck', 'babel-runtime/helpers/createClass', 'bunyan', 'express', 'mongoose', 'nodemailer', 'nodemailer-smtp-transport', 'babel-runtime/core-js/json/stringify', 'left-pad', 'cookie-parser', 'body-parser', 'cors', 'uuid', 'lodash', 'jsonwebtoken', 'bcryptjs', 'bluebird', 'babel-runtime/helpers/extends', 'express-jwt', 'uniqid', 'crypto', 'express-async-router'], factory) :
-	(factory(global._regeneratorRuntime,global._asyncToGenerator,global._Object$keys,global._Promise,global._Object$assign,global._classCallCheck,global._createClass,global.bunyan,global.express,global.mongoose,global.nodemailer,global.smtpTransport,global._JSON$stringify,global.leftPad,global.cookieParser,global.bodyParser,global.cors,global.uuid,global._,global.jwt,global.bcrypt,global.Promise,global._extends,global.jwt$1,global.uniqid,global.crypto,global.expressAsyncRouter));
-}(this, (function (_regeneratorRuntime,_asyncToGenerator,_Object$keys,_Promise,_Object$assign,_classCallCheck,_createClass,bunyan,express,mongoose,nodemailer,smtpTransport,_JSON$stringify,leftPad,cookieParser,bodyParser,cors,uuid,_,jwt,bcrypt,Promise,_extends,jwt$1,uniqid,crypto,expressAsyncRouter) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('babel-runtime/regenerator'), require('babel-runtime/helpers/asyncToGenerator'), require('babel-runtime/core-js/object/keys'), require('babel-runtime/core-js/promise'), require('babel-runtime/core-js/object/assign'), require('babel-runtime/helpers/classCallCheck'), require('babel-runtime/helpers/createClass'), require('bunyan'), require('express'), require('mongoose'), require('nodemailer'), require('nodemailer-smtp-transport'), require('babel-runtime/core-js/json/stringify'), require('left-pad'), require('cookie-parser'), require('body-parser'), require('cors'), require('uuid'), require('lodash'), require('jsonwebtoken'), require('bcryptjs'), require('bluebird'), require('uniqid'), require('babel-runtime/helpers/extends'), require('express-jwt'), require('crypto'), require('express-async-router')) :
+	typeof define === 'function' && define.amd ? define(['babel-runtime/regenerator', 'babel-runtime/helpers/asyncToGenerator', 'babel-runtime/core-js/object/keys', 'babel-runtime/core-js/promise', 'babel-runtime/core-js/object/assign', 'babel-runtime/helpers/classCallCheck', 'babel-runtime/helpers/createClass', 'bunyan', 'express', 'mongoose', 'nodemailer', 'nodemailer-smtp-transport', 'babel-runtime/core-js/json/stringify', 'left-pad', 'cookie-parser', 'body-parser', 'cors', 'uuid', 'lodash', 'jsonwebtoken', 'bcryptjs', 'bluebird', 'uniqid', 'babel-runtime/helpers/extends', 'express-jwt', 'crypto', 'express-async-router'], factory) :
+	(factory(global._regeneratorRuntime,global._asyncToGenerator,global._Object$keys,global._Promise,global._Object$assign,global._classCallCheck,global._createClass,global.bunyan,global.express,global.mongoose,global.nodemailer,global.smtpTransport,global._JSON$stringify,global.leftPad,global.cookieParser,global.bodyParser,global.cors,global.uuid,global._,global.jwt,global.bcrypt,global.Promise,global.uniqid,global._extends,global.expressJwt,global.crypto,global.expressAsyncRouter));
+}(this, (function (_regeneratorRuntime,_asyncToGenerator,_Object$keys,_Promise,_Object$assign,_classCallCheck,_createClass,bunyan,express,mongoose,nodemailer,smtpTransport,_JSON$stringify,leftPad,cookieParser,bodyParser,cors,uuid,_,jwt,bcrypt,Promise,uniqid,_extends,expressJwt,crypto,expressAsyncRouter) { 'use strict';
 
 _regeneratorRuntime = 'default' in _regeneratorRuntime ? _regeneratorRuntime['default'] : _regeneratorRuntime;
 _asyncToGenerator = 'default' in _asyncToGenerator ? _asyncToGenerator['default'] : _asyncToGenerator;
@@ -26,9 +26,9 @@ _ = 'default' in _ ? _['default'] : _;
 jwt = 'default' in jwt ? jwt['default'] : jwt;
 bcrypt = 'default' in bcrypt ? bcrypt['default'] : bcrypt;
 Promise = 'default' in Promise ? Promise['default'] : Promise;
-_extends = 'default' in _extends ? _extends['default'] : _extends;
-jwt$1 = 'default' in jwt$1 ? jwt$1['default'] : jwt$1;
 uniqid = 'default' in uniqid ? uniqid['default'] : uniqid;
+_extends = 'default' in _extends ? _extends['default'] : _extends;
+expressJwt = 'default' in expressJwt ? expressJwt['default'] : expressJwt;
 crypto = 'default' in crypto ? crypto['default'] : crypto;
 
 global.__DEV__ = true;
@@ -188,7 +188,9 @@ var LogSchema = new mongoose.Schema({
   id: {
     type: String,
     trim: true
-  }
+  },
+  successRequests: [],
+  errorRequests: []
 });
 
 var DomainSchema = new mongoose.Schema({
@@ -200,7 +202,23 @@ var DomainSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  channels: [],
   logs: [LogSchema]
+});
+
+var ChannelSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    trim: true
+  },
+  type: {
+    type: String,
+    trim: true
+  },
+  endpoint: {
+    type: String,
+    trim: true
+  }
 });
 
 var bcryptGenSalt = Promise.promisify(bcrypt.genSalt);
@@ -222,7 +240,8 @@ var User = (function (ctx) {
     password: {
       type: String
     },
-    domains: [DomainSchema]
+    domains: [DomainSchema],
+    channels: [ChannelSchema]
   }, {
     collection: 'user',
     timestamps: true
@@ -322,11 +341,45 @@ var Domain = (function (ctx) {
   return mongoose.model('Domain', DomainSchema);
 });
 
+var Channel = (function (ctx) {
+  if (!ctx.log) throw '!log';
+
+  return mongoose.model('Channel', ChannelSchema);
+});
+
+var Rate = (function (ctx) {
+  if (!ctx.log) throw '!log';
+
+  var schema = new mongoose.Schema({
+    id: {
+      type: String,
+      trim: true
+    },
+    name: {
+      type: String,
+      trim: true
+    },
+    maxDomains: {
+      type: Number
+    },
+    maxChannels: {
+      type: Number
+    }
+  }, {
+    collection: 'rate',
+    timestamps: true
+  });
+
+  return mongoose.model('Rate', schema);
+});
+
 var _getModels = function () {
   return {
     Domain: Domain.apply(undefined, arguments),
+    Rate: Rate.apply(undefined, arguments),
     User: User.apply(undefined, arguments),
     Token: Token.apply(undefined, arguments),
+    Channel: Channel.apply(undefined, arguments),
     scheme: {
       DomainSchema: DomainSchema
     }
@@ -354,7 +407,7 @@ var Auth = (function (ctx) {
               }
 
               _context.next = 3;
-              return User.findById(req.user._id);
+              return User.findOne({ id: req.user.id });
 
             case 3:
               user = _context.sent;
@@ -834,7 +887,7 @@ var Auth = (function (ctx) {
         return req.token;
       }
     };
-    jwt$1(options)(req, res, function (err) {
+    expressJwt(options)(req, res, function (err) {
       if (err) req._errJwt = err;
       next();
     });
@@ -849,7 +902,7 @@ var Auth = (function (ctx) {
   return resourse;
 });
 
-var DomainController = (function (ctx) {
+var Domain$1 = (function (ctx) {
   var User = ctx.models.User;
   var Domain = ctx.models.Domain;
 
@@ -885,7 +938,7 @@ var DomainController = (function (ctx) {
 
   resourse.create = function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(req, res) {
-      var params, url, userID, user, domain;
+      var params, url, channels, userID, user, domain;
       return _regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
@@ -900,23 +953,31 @@ var DomainController = (function (ctx) {
               return _context2.abrupt('return', res.status(400).json([{ signup: false, message: 'Домен не передан' }]));
 
             case 3:
-              url = params.url;
+              if (params.channels) {
+                _context2.next = 5;
+                break;
+              }
+
+              return _context2.abrupt('return', res.status(400).json([{ signup: false, message: 'Домен не передан' }]));
+
+            case 5:
+              url = params.url, channels = params.channels;
               userID = req.user.id;
-              _context2.next = 7;
+              _context2.next = 9;
               return User.findOne({ id: userID });
 
-            case 7:
+            case 9:
               user = _context2.sent;
-              domain = new Domain({ url: url, id: uniqid() });
+              domain = new Domain({ url: url, id: uniqid(), channels: channels });
 
               user.domains.push(domain);
-              _context2.next = 12;
+              _context2.next = 14;
               return user.save();
 
-            case 12:
+            case 14:
               return _context2.abrupt('return', res.json([{ flag: true, message: 'Домен успешно добавлен' }]));
 
-            case 13:
+            case 15:
             case 'end':
               return _context2.stop();
           }
@@ -1082,10 +1143,304 @@ var DomainController = (function (ctx) {
   return resourse;
 });
 
+var Account = (function (ctx) {
+  var User = ctx.models.User;
+  var Domain = ctx.models.Domain;
+
+  var resourse = {};
+
+  resourse.changePassword = function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(req, res) {
+      var _req$body, password, repeatPassword, userID, user;
+
+      return _regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _req$body = req.body, password = _req$body.password, repeatPassword = _req$body.repeatPassword;
+
+              if (!(!password || !repeatPassword)) {
+                _context.next = 3;
+                break;
+              }
+
+              return _context.abrupt("return", res.status(404).json([{ flag: false, message: "Вы не передали все данные" }]));
+
+            case 3:
+              if (!(password !== repeatPassword)) {
+                _context.next = 5;
+                break;
+              }
+
+              return _context.abrupt("return", res.status(404).json([{ flag: false, message: "Пароли не совпадают" }]));
+
+            case 5:
+              userID = req.user.id;
+              _context.next = 8;
+              return User.findOne({ id: userID });
+
+            case 8:
+              user = _context.sent;
+
+              user.password = password;
+              _context.next = 12;
+              return user.save();
+
+            case 12:
+              return _context.abrupt("return", res.json([{ flag: true, message: 'Пароль успешно изменен' }]));
+
+            case 13:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    return function (_x, _x2) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  resourse.channels = function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(req, res) {
+      var userID, user;
+      return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              userID = req.user.id;
+              _context2.next = 3;
+              return User.findOne({ id: userID });
+
+            case 3:
+              user = _context2.sent;
+
+              if (user) {
+                _context2.next = 6;
+                break;
+              }
+
+              return _context2.abrupt("return", res.status(404).json([{ flag: false, message: "Пользователь не найден" }]));
+
+            case 6:
+              return _context2.abrupt("return", res.json(user.channels));
+
+            case 7:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, this);
+    }));
+
+    return function (_x3, _x4) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+
+  return resourse;
+});
+
+var Channel$1 = (function (ctx) {
+  var User = ctx.models.User;
+  var Channel = ctx.models.Channel;
+
+  var controller = {};
+
+  controller.getChannels = function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(req, res) {
+      var userID, user;
+      return _regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              userID = req.user.id;
+              _context.next = 3;
+              return User.findOne({ id: userID });
+
+            case 3:
+              user = _context.sent;
+              return _context.abrupt('return', res.json(user.channels));
+
+            case 5:
+            case 'end':
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    return function (_x, _x2) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  controller.create = function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(req, res) {
+      var params, type, endpoint, userID, user, channel;
+      return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              params = req.body;
+
+              if (params.type) {
+                _context2.next = 3;
+                break;
+              }
+
+              return _context2.abrupt('return', res.status(400).json([{ flag: false, message: 'type не передан' }]));
+
+            case 3:
+              if (params.endpoint) {
+                _context2.next = 5;
+                break;
+              }
+
+              return _context2.abrupt('return', res.status(400).json([{ flag: false, message: 'endpoint не передан' }]));
+
+            case 5:
+              type = params.type, endpoint = params.endpoint;
+              userID = req.user.id;
+              _context2.next = 9;
+              return User.findOne({ id: userID });
+
+            case 9:
+              user = _context2.sent;
+              channel = new Channel({ id: uniqid(), type: type, endpoint: endpoint });
+
+              user.channels.push(channel);
+              _context2.next = 14;
+              return user.save();
+
+            case 14:
+              return _context2.abrupt('return', res.json([{ flag: true, message: 'Channel успешно добавлен' }]));
+
+            case 15:
+            case 'end':
+              return _context2.stop();
+          }
+        }
+      }, _callee2, this);
+    }));
+
+    return function (_x3, _x4) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+
+  controller.edit = function () {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3(req, res) {
+      var params, type, endpoint, userID, user;
+      return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              params = req.body;
+
+              if (params.type) {
+                _context3.next = 3;
+                break;
+              }
+
+              return _context3.abrupt('return', res.status(400).json([{ flag: false, message: 'type не передан' }]));
+
+            case 3:
+              if (params.endpoint) {
+                _context3.next = 5;
+                break;
+              }
+
+              return _context3.abrupt('return', res.status(400).json([{ flag: false, message: 'endpoint не передан' }]));
+
+            case 5:
+              type = params.type, endpoint = params.endpoint;
+              userID = req.user.id;
+              _context3.next = 9;
+              return User.findOne({ id: userID });
+
+            case 9:
+              user = _context3.sent;
+
+              channel = user.channels.find(function (channel) {
+                return channel.id === id;
+              });
+              channel.type = type;
+              channel.endpoint = endpoint;
+              _context3.next = 15;
+              return user.save();
+
+            case 15:
+              return _context3.abrupt('return', res.json([{ flag: true, message: 'Канал успешно изменен' }]));
+
+            case 16:
+            case 'end':
+              return _context3.stop();
+          }
+        }
+      }, _callee3, this);
+    }));
+
+    return function (_x5, _x6) {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+
+  controller.delete = function () {
+    var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee4(req, res) {
+      var id, userID, user;
+      return _regeneratorRuntime.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              if (req.params.id) {
+                _context4.next = 2;
+                break;
+              }
+
+              return _context4.abrupt('return', res.status(400).json([{ flag: false, message: 'Id канала не передан' }]));
+
+            case 2:
+              id = req.params.id;
+              userID = req.user.id;
+              _context4.next = 6;
+              return User.findOne({ id: userID });
+
+            case 6:
+              user = _context4.sent;
+
+              user.channels = user.channels.filter(function (channel) {
+                return channel.id != id;
+              });
+              _context4.next = 10;
+              return user.save();
+
+            case 10:
+              return _context4.abrupt('return', res.json([{ flag: true, message: 'Канал успешно удален' }]));
+
+            case 11:
+            case 'end':
+              return _context4.stop();
+          }
+        }
+      }, _callee4, this);
+    }));
+
+    return function (_x7, _x8) {
+      return _ref4.apply(this, arguments);
+    };
+  }();
+
+  return controller;
+});
+
 var _getResourses = function () {
   return {
     Auth: Auth.apply(undefined, arguments),
-    DomainController: DomainController.apply(undefined, arguments)
+    Domain: Domain$1.apply(undefined, arguments),
+    Account: Account.apply(undefined, arguments),
+    Channel: Channel$1.apply(undefined, arguments)
   };
 };
 
@@ -1109,19 +1464,45 @@ var getAuth = (function (ctx) {
 });
 
 var getDomain = (function (ctx) {
-  if (!_.has(ctx, 'resourses.DomainController.domains')) throw '!resourses.DomainController.domains';
-  if (!_.has(ctx, 'resourses.DomainController.create')) throw '!resourses.DomainController.create';
-  if (!_.has(ctx, 'resourses.DomainController.delete')) throw '!resourses.DomainController.delete';
-  if (!_.has(ctx, 'resourses.DomainController.edit')) throw '!resourses.DomainController.edit';
-  if (!_.has(ctx, 'resourses.DomainController.edit')) throw '!resourses.DomainController.logs';
+  if (!_.has(ctx, 'resourses.Domain.domains')) throw '!resourses.Domain.domains';
+  if (!_.has(ctx, 'resourses.Domain.create')) throw '!resourses.Domain.create';
+  if (!_.has(ctx, 'resourses.Domain.delete')) throw '!resourses.Domain.delete';
+  if (!_.has(ctx, 'resourses.Domain.edit')) throw '!resourses.Domain.edit';
+  if (!_.has(ctx, 'resourses.Domain.edit')) throw '!resourses.Domain.logs';
 
   var api = expressAsyncRouter.AsyncRouter();
 
-  api.get('/', ctx.resourses.DomainController.domains);
-  api.post('/create', ctx.resourses.DomainController.create);
-  api.delete('/delete/:id', ctx.resourses.DomainController.delete);
-  api.put('/edit', ctx.resourses.DomainController.edit);
-  api.get('/:domainId/logs', ctx.resourses.DomainController.logs);
+  api.get('/', ctx.resourses.Domain.domains);
+  api.post('/create', ctx.resourses.Domain.create);
+  api.delete('/delete/:id', ctx.resourses.Domain.delete);
+  api.put('/edit', ctx.resourses.Domain.edit);
+  api.get('/:domainId/logs', ctx.resourses.Domain.logs);
+
+  return api;
+});
+
+var getChannel = (function (ctx) {
+  if (!_.has(ctx, 'resourses.Channel.getChannels')) throw '!resourses.Channel.getChannels';
+  if (!_.has(ctx, 'resourses.Channel.create')) throw '!resourses.Channel.create';
+
+  var api = expressAsyncRouter.AsyncRouter();
+
+  api.get('/', ctx.resourses.Channel.getChannels);
+  api.post('/create', ctx.resourses.Channel.create);
+  api.put('/edit', ctx.resourses.Channel.edit);
+  api.delete('/delete/:id', ctx.resourses.Channel.delete);
+
+  return api;
+});
+
+var getAccount = (function (ctx) {
+  if (!_.has(ctx, 'resourses.Account.changePassword')) throw '!resourses.Account.changePassword';
+  if (!_.has(ctx, 'resourses.Account.channels')) throw '!resourses.Account.channels';
+
+  var api = expressAsyncRouter.AsyncRouter();
+
+  api.post('/changePassword', ctx.resourses.Account.changePassword);
+  api.get('/channels', ctx.resourses.Account.channels);
 
   return api;
 });
@@ -1134,10 +1515,16 @@ var getApi = (function (ctx) {
 	});
 
 	api.use('/auth', getAuth(ctx));
-	api.use('/domains', jwt$1({ secret: ctx.config.jwt.secret }), getDomain(ctx));
+	api.use('/domains', expressJwt({ secret: ctx.config.jwt.secret }), getDomain(ctx));
+	api.use('/channels', expressJwt({ secret: ctx.config.jwt.secret }), getChannel(ctx));
+	api.use('/account', expressJwt({ secret: ctx.config.jwt.secret }), getAccount(ctx));
 
-	api.use('/domains', function (err, req, res, next) {
-		return res.status(401).json([{ flag: false, message: 'Неправильный токен' }]);
+	// api.use('/domains',(function(err, req, res, next) {
+	// 	return res.status(401).json([{flag: false, message: 'Неправильный токен'}]);
+	// }))
+
+	api.use('/', function (err, req, res, next) {
+		return res.status(401).json([{ flag: false, message: 'Не авторизован' }]);
 	});
 
 	return api;

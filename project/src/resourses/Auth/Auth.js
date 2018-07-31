@@ -74,10 +74,9 @@ export default (ctx) => {
       const existUser = await User.findOne(criteria)
       if (existUser) return res.status(400).json([{signup: false, message: 'Такой email зарегистрирован'}])
 
-      const user = new User({ ...userFields, id: uniqid()})
-
-
+      const user = new User({ ...userFields, id: uniqid()});
       await user.save()
+
       const userToken = new Token({ userID: user.id , id: uniqid(), forgotEmailToken: '' })
       await userToken.save();
 

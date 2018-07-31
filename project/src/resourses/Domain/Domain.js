@@ -20,11 +20,14 @@ export default (ctx) => {
     if (!params.url) {
       return res.status(400).json([{signup: false, message: 'Домен не передан'}]);
     }
-    const { url } = params;
+    if (!params.channels) {
+      return res.status(400).json([{signup: false, message: 'Домен не передан'}]);
+    }
+    const { url, channels } = params;
 
     const userID = req.user.id;
     const user = await User.findOne({id: userID});
-    const domain = new Domain({ url, id: uniqid(), })
+    const domain = new Domain({ url, id: uniqid(), channels})
     user.domains.push(domain);
     await user.save();
 

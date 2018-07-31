@@ -1,23 +1,8 @@
-import _ from 'lodash'
 import mongoose from 'mongoose'
+import DomainSchema from './DomainSchema';
 
-const LogSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    trim: true,
-  }
-})
+export default (ctx) => {
+  if (!ctx.log) throw '!log'
 
-const DomainSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    trim: true,
-  },
-  url: {
-    type: String,
-    trim: true,
-  },
-  logs: [LogSchema],
-})
-
-export default DomainSchema
+  return  mongoose.model('Domain', DomainSchema);
+}
