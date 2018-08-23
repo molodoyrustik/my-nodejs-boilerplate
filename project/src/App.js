@@ -1,13 +1,12 @@
 import bunyan from 'bunyan';
 import express from 'express';
 import mongoose from 'mongoose';
-import nodemailer from 'nodemailer';
-import smtpTransport from 'nodemailer-smtp-transport';
+
 import getMiddlewares from './middlewares/index';
 import getModels from './models/index';
-import getResourses from './resourses/index';
+import getControllers from './controllers/index';
+import getUtils from './utils/index';
 import getApi from './api/api';
-
 
 export default class App {
   constructor(params = {}) {
@@ -27,9 +26,11 @@ export default class App {
   getMiddlewares() {
     return getMiddlewares(this);
   }
+
   getModels() {
     return getModels(this);
   }
+
   getDatabase() {
     return {
       run: () => {
@@ -40,23 +41,31 @@ export default class App {
       }
     }
   }
-  getResourses() {
-    return getResourses(this);
+
+  getControllers() {
+    return getControllers(this);
+  }
+
+  getUtils() {
+    return getUtils(this);
   }
 
   init() {
     this.log.trace('App init');
-    const transporter = nodemailer.createTransport(smtpTransport(this.config.nodemailer));
-    this.transporter = transporter;
-
     this.app = express();
     this.db = this.getDatabase();
+
+    this.utils = this.getUtils();
+    this.log.trace('utils', Object.keys(this.utils));
+
     this.middlewares = this.getMiddlewares();
     this.log.trace('middlewares', Object.keys(this.middlewares));
+
     this.models = this.getModels();
     this.log.trace('models', Object.keys(this.models));
-    this.resourses = this.getResourses();
-    this.log.trace('resourses', Object.keys(this.resourses));
+
+    this.controllers = this.getControllers();
+    this.log.trace('controllers', Object.keys(this.controllers));
 
     this.useMiddlewares();
     this.useRoutes();
@@ -68,8 +77,9 @@ export default class App {
     this.app.use(this.middlewares.reqLog);
     this.app.use(this.middlewares.accessLogger);
     this.app.use(this.middlewares.reqParser);
-    this.app.use(this.resourses.Auth.parseToken);
-    this.app.use(this.resourses.Auth.parseUser);
+
+    this.app.use(this.controllers.Auth.parseToken);
+    this.app.use(this.controllers.Auth.parseUser);
   }
   useRoutes() {
     const api = getApi(this);

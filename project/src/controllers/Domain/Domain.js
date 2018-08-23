@@ -6,22 +6,22 @@ export default (ctx) => {
   const User = ctx.models.User;
   const Domain = ctx.models.Domain;
 
-  let resourse = {};
+  let controller = {};
 
-  resourse.domains = async function(req, res) {
+  controller.domains = async function(req, res) {
     const userID = req.user.id;
     const user = await User.findOne({id: userID});
 
     return res.json(user.domains);
   }
 
-  resourse.create = async function(req, res) {
+  controller.create = async function(req, res) {
     const params = req.body
     if (!params.url) {
       return res.status(400).json([{signup: false, message: 'Домен не передан'}]);
     }
     if (!params.channels) {
-      return res.status(400).json([{signup: false, message: 'Домен не передан'}]);
+      return res.status(400).json([{signup: false, message: 'Каналы не переданы'}]);
     }
     const { url, channels } = params;
 
@@ -34,7 +34,7 @@ export default (ctx) => {
     return res.json([{ flag: true, message: 'Домен успешно добавлен'}]);
   }
 
-  resourse.edit = async function(req, res) {
+  controller.edit = async function(req, res) {
     const params = req.body
     if (!params.url) {
       return res.status(400).json([{signup: false, message: 'Домен не передан'}]);
@@ -52,7 +52,7 @@ export default (ctx) => {
     return res.json([{ flag: true, message: 'Домен успешно изменен'}]);
   }
 
-  resourse.delete = async function(req, res) {
+  controller.delete = async function(req, res) {
 
     if (!req.params.id) {
       return res.status(400).json([{signup: false, message: 'Id домена не передан'}]);
@@ -67,7 +67,7 @@ export default (ctx) => {
     return res.json([{ flag: true, message: 'Домен успешно удален'}]);
   }
 
-  resourse.logs = async function(req, res) {
+  controller.logs = async function(req, res) {
     if (!req.params.domainId) {
       return res.status(400).json([{signup: false, message: 'Id домена не передан'}]);
     }
@@ -84,5 +84,5 @@ export default (ctx) => {
     return res.json([{ flag: true, logs }]);
   }
 
-  return resourse
+  return controller
 }

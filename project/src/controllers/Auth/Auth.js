@@ -11,11 +11,11 @@ export default (ctx) => {
   const User = ctx.models.User;
   const Token = ctx.models.Token;
   const Domain = ctx.models.Domain;
-  const transporter = ctx.transporter;
+  const transporter = ctx.utils.Transporter;
 
-  const resourse = {}
+  const controller = {}
 
-  resourse.validate = async function (req, res) {
+  controller.validate = async function (req, res) {
     if(req.user) {
       const user = await User.findOne({id: req.user.id})
       if (!user) return res.status(404).json([{validate: false, message: 'Пользователь не найден в базе'}]);
@@ -29,11 +29,11 @@ export default (ctx) => {
     return res.status(404).json([{validate: false, message: 'Пользователь не найден в базе'}]);
   }
 
-  resourse.getUserFields = function (req) {
+  controller.getUserFields = function (req) {
     return req.body;
   }
 
-  resourse.validationUserFields = function(userFields, res) {
+  controller.validationUserFields = function(userFields, res) {
     let valid = {
       isValid: false,
       message: []
@@ -52,7 +52,7 @@ export default (ctx) => {
     return valid;
   }
 
-  resourse.getUserCriteria = function (req, res) {
+  controller.getUserCriteria = function (req, res) {
     const params = req.body
     if (params.email) {
       return {
@@ -62,14 +62,14 @@ export default (ctx) => {
     return res.status(400).json([{signup: false, message: 'Параметр email не передан'}]);
   }
 
-  resourse.signup = async function (req, res) {
+  controller.signup = async function (req, res) {
     try {
-      const userFields = resourse.getUserFields(req, res);
-      const valid = resourse.validationUserFields(userFields, res);
+      const userFields = controller.getUserFields(req, res);
+      const valid = controller.validationUserFields(userFields, res);
       if (valid.isValid) {
         return res.status(400).json(valid.message);
       }
-      const criteria = resourse.getUserCriteria(req, res);
+      const criteria = controller.getUserCriteria(req, res);
 
       const existUser = await User.findOne(criteria)
       if (existUser) return res.status(400).json([{signup: false, message: 'Такой email зарегистрирован'}])
@@ -94,11 +94,11 @@ export default (ctx) => {
     }
   }
 
-  resourse.login = async function (req, res) {
-    const params = resourse.getUserFields(req, res);
+  controller.login = async function (req, res) {
+    const params = controller.getUserFields(req, res);
     if (!params.password) return res.status(400).json([{login: false, message: 'Параметр password не передан'}]);
 
-    const criteria = resourse.getUserCriteria(req);
+    const criteria = controller.getUserCriteria(req);
     const user = await User.findOne(criteria);
 
     if (!user) return res.status(404).json([{login: false, message: 'Такой пользователь не найден'}]);
@@ -116,13 +116,13 @@ export default (ctx) => {
     }])
   }
 
-  resourse.forgot = async function (req, res) {
-    const params = resourse.getUserFields(req, res);
+  controller.forgot = async function (req, res) {
+    const params = controller.getUserFields(req, res);
 
     if (!params.email) return res.status(400).json([{ forgot: false, message: 'Параметр email не передан' }]);
     if (!params.captcha) return res.status(400).json([{ forgot: false, message: 'Параметр captcha не передан' }]);
 
-    const criteria = resourse.getUserCriteria(req);
+    const criteria = controller.getUserCriteria(req);
     const user = await User.findOne(criteria);
 
     if (!user) return res.status(404).json([{login: false, message: 'Пользователь с таким email не найден в базе'}]);
@@ -133,7 +133,12 @@ export default (ctx) => {
     await userToken.save();
 
 
-    let mailText = `Перейдите по ссылке чтобы изменить пароль http://localhost:3000/auth/forgot/${userToken.forgotEmailToken}`;
+    let siteUrl = 'http://localhost:3000/';
+    if (__PROD__) {
+      siteUrl = 'http://app.ashlie.io/';
+    }
+
+    let mailText = `Перейдите по ссылке чтобы изменить пароль ${siteUrl}auth/forgot/${userToken.forgotEmailToken}`;
 
     var mailOptions = {
       from: 'molodoyrustik@mail.ru',
@@ -150,7 +155,7 @@ export default (ctx) => {
     return res.json(result);
   }
 
-  resourse.checkForgotToken = async function (req, res) {
+  controller.checkForgotToken = async function (req, res) {
     const { forgotEmailToken } = req.params;
     if (!forgotEmailToken) {
       return res.status(400).json([{checkForgotToken: false, message: 'Токен не был передан'}]);
@@ -167,8 +172,8 @@ export default (ctx) => {
     }]);
   }
 
-  resourse.reset = async function (req, res) {
-    const params = resourse.getUserFields(req, res);
+  controller.reset = async function (req, res) {
+    const params = controller.getUserFields(req, res);
     const { password, checkPassword, captcha, forgotEmailToken, } = params;
 
     if (!password) return res.status(400).json([{reset: false, message: 'Параметр password не передан'}]);
@@ -195,7 +200,7 @@ export default (ctx) => {
     }])
   }
 
-  resourse.getToken = function (req) {
+  controller.getToken = function (req) {
     if (req.headers.authorization && req.headers.authorization.split( ' ' )[ 0 ] === 'Bearer') {
       return req.headers.authorization.split( ' ' )[ 1 ]
     } else if (req.headers['x-access-token']) {
@@ -209,13 +214,13 @@ export default (ctx) => {
     return null;
   }
 
-  resourse.parseToken = function (req, res, next) {
-    const token = resourse.getToken(req)
+  controller.parseToken = function (req, res, next) {
+    const token = controller.getToken(req)
     req.token = token
     next()
   }
 
-  resourse.parseUser = function (req, res, next) {
+  controller.parseUser = function (req, res, next) {
     const options = {
       secret: ctx.config && ctx.config.jwt.secret || 'SECRET',
       getToken: req => req.token,
@@ -226,11 +231,11 @@ export default (ctx) => {
     })
   }
 
-  resourse.isAuth = function (req, res, next) {
+  controller.isAuth = function (req, res, next) {
     if (req._errJwt) return next(req._errJwt)
     if (!req.user || !req.user._id) return res.status(401).send('!req.user')
     next()
   }
 
-  return resourse
+  return controller
 }

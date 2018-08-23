@@ -1,25 +1,23 @@
 import _ from 'lodash';
 import mongoose from 'mongoose';
 import { AsyncRouter } from 'express-async-router';
-import Auth from '../../resourses/Auth/Auth';
-
 
 export default (ctx) => {
-  if (!_.has(ctx, 'resourses.Auth.signup')) throw '!resourses.Auth.signup'
-  if (!_.has(ctx, 'resourses.Auth.login')) throw '!resourses.Auth.login'
-  if (!_.has(ctx, 'resourses.Auth.validate')) throw '!resourses.Auth.validate'
-  if (!_.has(ctx, 'resourses.Auth.forgot')) throw '!resourses.Auth.forgot'
-  if (!_.has(ctx, 'resourses.Auth.checkForgotToken')) throw '!resourses.Auth.checkForgotToken'
-  if (!_.has(ctx, 'resourses.Auth.reset')) throw '!resourses.Auth.reset'
+  if (!_.has(ctx, 'controllers.Auth.signup')) throw '!controllers.Auth.signup'
+  if (!_.has(ctx, 'controllers.Auth.login')) throw '!controllers.Auth.login'
+  if (!_.has(ctx, 'controllers.Auth.validate')) throw '!controllers.Auth.validate'
+  if (!_.has(ctx, 'controllers.Auth.forgot')) throw '!controllers.Auth.forgot'
+  if (!_.has(ctx, 'controllers.Auth.checkForgotToken')) throw '!controllers.Auth.checkForgotToken'
+  if (!_.has(ctx, 'controllers.Auth.reset')) throw '!controllers.Auth.reset'
+
 	const api = AsyncRouter();
 
-  api.all('/validate', ctx.resourses.Auth.validate);
-  api.post('/signup', ctx.resourses.Auth.signup);
-  api.post('/login', ctx.resourses.Auth.login);
-  api.post('/forgot', ctx.resourses.Auth.forgot);
-  api.get('/forgot/:forgotEmailToken', ctx.resourses.Auth.checkForgotToken);
-  api.post('/reset', ctx.resourses.Auth.reset);
-
+  api.all('/validate', ctx.controllers.Auth.validate);
+  api.post('/signup', ctx.controllers.Auth.signup);
+  api.post('/login', ctx.controllers.Auth.login);
+  api.post('/forgot', ctx.controllers.Auth.forgot);
+  api.get('/forgot/:forgotEmailToken', ctx.controllers.Auth.checkForgotToken);
+  api.post('/reset', ctx.controllers.Auth.reset);
 
 	return api;
 }
