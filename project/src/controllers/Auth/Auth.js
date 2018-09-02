@@ -11,6 +11,8 @@ export default (ctx) => {
   const User = ctx.models.User;
   const Token = ctx.models.Token;
   const Domain = ctx.models.Domain;
+  const Channel = ctx.models.Channel;
+
   const transporter = ctx.utils.Transporter;
 
   const controller = {}
@@ -72,9 +74,22 @@ export default (ctx) => {
       const criteria = controller.getUserCriteria(req, res);
 
       const existUser = await User.findOne(criteria)
-      if (existUser) return res.status(400).json([{signup: false, message: 'Такой email зарегистрирован'}])
+      if (existUser) return res.status(400).json([{signup: false, message: 'Такой email зарегистрирован'}]);
 
-      const user = new User({ ...userFields, id: uniqid()});
+      const channel = new Channel({
+        id: uniqid(),
+        type: 'email',
+        endpoint: userFields.email
+      });
+
+      const user = new User({
+        ...userFields,
+        channels: [
+          channel,
+        ],
+        id: uniqid(),
+      });
+
       await user.save()
 
       const userToken = new Token({ userID: user.id , id: uniqid(), forgotEmailToken: '' })

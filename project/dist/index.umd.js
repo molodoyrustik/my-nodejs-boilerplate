@@ -1,8 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('babel-runtime/regenerator'), require('babel-runtime/helpers/asyncToGenerator'), require('babel-runtime/core-js/object/keys'), require('babel-runtime/core-js/promise'), require('babel-runtime/core-js/object/assign'), require('babel-runtime/helpers/classCallCheck'), require('babel-runtime/helpers/createClass'), require('bunyan'), require('express'), require('mongoose'), require('nodemailer'), require('nodemailer-smtp-transport'), require('babel-runtime/core-js/json/stringify'), require('left-pad'), require('cookie-parser'), require('body-parser'), require('cors'), require('uuid'), require('lodash'), require('jsonwebtoken'), require('bcryptjs'), require('bluebird'), require('uniqid'), require('babel-runtime/helpers/extends'), require('express-jwt'), require('crypto'), require('express-async-router')) :
-	typeof define === 'function' && define.amd ? define(['babel-runtime/regenerator', 'babel-runtime/helpers/asyncToGenerator', 'babel-runtime/core-js/object/keys', 'babel-runtime/core-js/promise', 'babel-runtime/core-js/object/assign', 'babel-runtime/helpers/classCallCheck', 'babel-runtime/helpers/createClass', 'bunyan', 'express', 'mongoose', 'nodemailer', 'nodemailer-smtp-transport', 'babel-runtime/core-js/json/stringify', 'left-pad', 'cookie-parser', 'body-parser', 'cors', 'uuid', 'lodash', 'jsonwebtoken', 'bcryptjs', 'bluebird', 'uniqid', 'babel-runtime/helpers/extends', 'express-jwt', 'crypto', 'express-async-router'], factory) :
-	(factory(global._regeneratorRuntime,global._asyncToGenerator,global._Object$keys,global._Promise,global._Object$assign,global._classCallCheck,global._createClass,global.bunyan,global.express,global.mongoose,global.nodemailer,global.smtpTransport,global._JSON$stringify,global.leftPad,global.cookieParser,global.bodyParser,global.cors,global.uuid,global._,global.jwt,global.bcrypt,global.Promise,global.uniqid,global._extends,global.expressJwt,global.crypto,global.expressAsyncRouter));
-}(this, (function (_regeneratorRuntime,_asyncToGenerator,_Object$keys,_Promise,_Object$assign,_classCallCheck,_createClass,bunyan,express,mongoose,nodemailer,smtpTransport,_JSON$stringify,leftPad,cookieParser,bodyParser,cors,uuid,_,jwt,bcrypt,Promise,uniqid,_extends,expressJwt,crypto,expressAsyncRouter) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('babel-runtime/regenerator'), require('babel-runtime/helpers/asyncToGenerator'), require('babel-runtime/core-js/object/keys'), require('babel-runtime/core-js/promise'), require('babel-runtime/core-js/object/assign'), require('babel-runtime/helpers/classCallCheck'), require('babel-runtime/helpers/createClass'), require('bunyan'), require('express'), require('mongoose'), require('babel-runtime/core-js/json/stringify'), require('left-pad'), require('cookie-parser'), require('body-parser'), require('cors'), require('uuid'), require('lodash'), require('jsonwebtoken'), require('bcryptjs'), require('bluebird'), require('uniqid'), require('babel-runtime/helpers/extends'), require('express-jwt'), require('crypto'), require('nodemailer'), require('nodemailer-smtp-transport'), require('express-async-router')) :
+	typeof define === 'function' && define.amd ? define(['babel-runtime/regenerator', 'babel-runtime/helpers/asyncToGenerator', 'babel-runtime/core-js/object/keys', 'babel-runtime/core-js/promise', 'babel-runtime/core-js/object/assign', 'babel-runtime/helpers/classCallCheck', 'babel-runtime/helpers/createClass', 'bunyan', 'express', 'mongoose', 'babel-runtime/core-js/json/stringify', 'left-pad', 'cookie-parser', 'body-parser', 'cors', 'uuid', 'lodash', 'jsonwebtoken', 'bcryptjs', 'bluebird', 'uniqid', 'babel-runtime/helpers/extends', 'express-jwt', 'crypto', 'nodemailer', 'nodemailer-smtp-transport', 'express-async-router'], factory) :
+	(factory(global._regeneratorRuntime,global._asyncToGenerator,global._Object$keys,global._Promise,global._Object$assign,global._classCallCheck,global._createClass,global.bunyan,global.express,global.mongoose,global._JSON$stringify,global.leftPad,global.cookieParser,global.bodyParser,global.cors,global.uuid,global._,global.jwt,global.bcrypt,global.Promise,global.uniqid,global._extends,global.expressJwt,global.crypto,global.nodemailer,global.smtpTransport,global.expressAsyncRouter));
+}(this, (function (_regeneratorRuntime,_asyncToGenerator,_Object$keys,_Promise,_Object$assign,_classCallCheck,_createClass,bunyan,express,mongoose,_JSON$stringify,leftPad,cookieParser,bodyParser,cors,uuid,_,jwt,bcrypt,Promise,uniqid,_extends,expressJwt,crypto,nodemailer,smtpTransport,expressAsyncRouter) { 'use strict';
 
 _regeneratorRuntime = 'default' in _regeneratorRuntime ? _regeneratorRuntime['default'] : _regeneratorRuntime;
 _asyncToGenerator = 'default' in _asyncToGenerator ? _asyncToGenerator['default'] : _asyncToGenerator;
@@ -14,8 +14,6 @@ _createClass = 'default' in _createClass ? _createClass['default'] : _createClas
 bunyan = 'default' in bunyan ? bunyan['default'] : bunyan;
 express = 'default' in express ? express['default'] : express;
 mongoose = 'default' in mongoose ? mongoose['default'] : mongoose;
-nodemailer = 'default' in nodemailer ? nodemailer['default'] : nodemailer;
-smtpTransport = 'default' in smtpTransport ? smtpTransport['default'] : smtpTransport;
 _JSON$stringify = 'default' in _JSON$stringify ? _JSON$stringify['default'] : _JSON$stringify;
 leftPad = 'default' in leftPad ? leftPad['default'] : leftPad;
 cookieParser = 'default' in cookieParser ? cookieParser['default'] : cookieParser;
@@ -30,6 +28,8 @@ uniqid = 'default' in uniqid ? uniqid['default'] : uniqid;
 _extends = 'default' in _extends ? _extends['default'] : _extends;
 expressJwt = 'default' in expressJwt ? expressJwt['default'] : expressJwt;
 crypto = 'default' in crypto ? crypto['default'] : crypto;
+nodemailer = 'default' in nodemailer ? nodemailer['default'] : nodemailer;
+smtpTransport = 'default' in smtpTransport ? smtpTransport['default'] : smtpTransport;
 
 global.__DEV__ = true;
 // __STAGE__
@@ -308,9 +308,6 @@ var User = (function (ctx) {
   return mongoose.model('User', schema);
 });
 
-var bcryptGenSalt$1 = Promise.promisify(bcrypt.genSalt);
-var bcryptHash$1 = Promise.promisify(bcrypt.hash);
-var bcryptCompare$1 = Promise.promisify(bcrypt.compare);
 var Token = (function (ctx) {
   if (!ctx.log) throw '!log';
 
@@ -390,11 +387,13 @@ var Auth = (function (ctx) {
   var User = ctx.models.User;
   var Token = ctx.models.Token;
   var Domain = ctx.models.Domain;
-  var transporter = ctx.transporter;
+  var Channel = ctx.models.Channel;
 
-  var resourse = {};
+  var transporter = ctx.utils.Transporter;
 
-  resourse.validate = function () {
+  var controller = {};
+
+  controller.validate = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(req, res) {
       var user;
       return _regeneratorRuntime.wrap(function _callee$(_context) {
@@ -443,11 +442,11 @@ var Auth = (function (ctx) {
     };
   }();
 
-  resourse.getUserFields = function (req) {
+  controller.getUserFields = function (req) {
     return req.body;
   };
 
-  resourse.validationUserFields = function (userFields, res) {
+  controller.validationUserFields = function (userFields, res) {
     var valid = {
       isValid: false,
       message: []
@@ -466,7 +465,7 @@ var Auth = (function (ctx) {
     return valid;
   };
 
-  resourse.getUserCriteria = function (req, res) {
+  controller.getUserCriteria = function (req, res) {
     var params = req.body;
     if (params.email) {
       return {
@@ -476,16 +475,16 @@ var Auth = (function (ctx) {
     return res.status(400).json([{ signup: false, message: 'Параметр email не передан' }]);
   };
 
-  resourse.signup = function () {
+  controller.signup = function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(req, res) {
-      var userFields, valid, criteria, existUser, user, userToken, result;
+      var userFields, valid, criteria, existUser, channel, user, userToken, result;
       return _regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
               _context2.prev = 0;
-              userFields = resourse.getUserFields(req, res);
-              valid = resourse.validationUserFields(userFields, res);
+              userFields = controller.getUserFields(req, res);
+              valid = controller.validationUserFields(userFields, res);
 
               if (!valid.isValid) {
                 _context2.next = 5;
@@ -495,7 +494,7 @@ var Auth = (function (ctx) {
               return _context2.abrupt('return', res.status(400).json(valid.message));
 
             case 5:
-              criteria = resourse.getUserCriteria(req, res);
+              criteria = controller.getUserCriteria(req, res);
               _context2.next = 8;
               return User.findOne(criteria);
 
@@ -510,16 +509,24 @@ var Auth = (function (ctx) {
               return _context2.abrupt('return', res.status(400).json([{ signup: false, message: 'Такой email зарегистрирован' }]));
 
             case 11:
-              user = new User(_extends({}, userFields, { id: uniqid() }));
-              _context2.next = 14;
+              channel = new Channel({
+                id: uniqid(),
+                type: 'email',
+                endpoint: userFields.email
+              });
+              user = new User(_extends({}, userFields, {
+                channels: [channel],
+                id: uniqid()
+              }));
+              _context2.next = 15;
               return user.save();
 
-            case 14:
+            case 15:
               userToken = new Token({ userID: user.id, id: uniqid(), forgotEmailToken: '' });
-              _context2.next = 17;
+              _context2.next = 18;
               return userToken.save();
 
-            case 17:
+            case 18:
               result = [{
                 signup: true,
                 user: user,
@@ -527,19 +534,19 @@ var Auth = (function (ctx) {
               }];
               return _context2.abrupt('return', res.json(result));
 
-            case 21:
-              _context2.prev = 21;
+            case 22:
+              _context2.prev = 22;
               _context2.t0 = _context2['catch'](0);
 
               console.log(_context2.t0);
               return _context2.abrupt('return', res.status(500).json(_context2.t0));
 
-            case 25:
+            case 26:
             case 'end':
               return _context2.stop();
           }
         }
-      }, _callee2, this, [[0, 21]]);
+      }, _callee2, this, [[0, 22]]);
     }));
 
     return function (_x3, _x4) {
@@ -547,14 +554,14 @@ var Auth = (function (ctx) {
     };
   }();
 
-  resourse.login = function () {
+  controller.login = function () {
     var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3(req, res) {
       var params, criteria, user;
       return _regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              params = resourse.getUserFields(req, res);
+              params = controller.getUserFields(req, res);
 
               if (params.password) {
                 _context3.next = 3;
@@ -564,7 +571,7 @@ var Auth = (function (ctx) {
               return _context3.abrupt('return', res.status(400).json([{ login: false, message: 'Параметр password не передан' }]));
 
             case 3:
-              criteria = resourse.getUserCriteria(req);
+              criteria = controller.getUserCriteria(req);
               _context3.next = 6;
               return User.findOne(criteria);
 
@@ -615,14 +622,14 @@ var Auth = (function (ctx) {
     };
   }();
 
-  resourse.forgot = function () {
+  controller.forgot = function () {
     var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee4(req, res) {
-      var params, criteria, user, token, userToken, mailText, mailOptions, result;
+      var params, criteria, user, token, userToken, siteUrl, mailText, mailOptions, result;
       return _regeneratorRuntime.wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
-              params = resourse.getUserFields(req, res);
+              params = controller.getUserFields(req, res);
 
               if (params.email) {
                 _context4.next = 3;
@@ -640,7 +647,7 @@ var Auth = (function (ctx) {
               return _context4.abrupt('return', res.status(400).json([{ forgot: false, message: 'Параметр captcha не передан' }]));
 
             case 5:
-              criteria = resourse.getUserCriteria(req);
+              criteria = controller.getUserCriteria(req);
               _context4.next = 8;
               return User.findOne(criteria);
 
@@ -671,24 +678,30 @@ var Auth = (function (ctx) {
               return userToken.save();
 
             case 20:
-              mailText = '\u041F\u0435\u0440\u0435\u0439\u0434\u0438\u0442\u0435 \u043F\u043E \u0441\u0441\u044B\u043B\u043A\u0435 \u0447\u0442\u043E\u0431\u044B \u0438\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u0430\u0440\u043E\u043B\u044C http://localhost:3000/auth/forgot/' + userToken.forgotEmailToken;
+              siteUrl = 'http://localhost:3000/';
+
+              if (__PROD__) {
+                siteUrl = 'http://app.ashlie.io/';
+              }
+
+              mailText = '\u041F\u0435\u0440\u0435\u0439\u0434\u0438\u0442\u0435 \u043F\u043E \u0441\u0441\u044B\u043B\u043A\u0435 \u0447\u0442\u043E\u0431\u044B \u0438\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u0430\u0440\u043E\u043B\u044C ' + siteUrl + 'auth/forgot/' + userToken.forgotEmailToken;
               mailOptions = {
                 from: 'molodoyrustik@mail.ru',
                 to: user.email,
                 subject: 'Восстановления пароля сайта Ashile.io',
                 text: mailText
               };
-              _context4.next = 24;
+              _context4.next = 26;
               return transporter.sendMail(mailOptions);
 
-            case 24:
+            case 26:
               result = [{
                 __pack: 1,
                 forgot: true
               }];
               return _context4.abrupt('return', res.json(result));
 
-            case 26:
+            case 28:
             case 'end':
               return _context4.stop();
           }
@@ -701,7 +714,7 @@ var Auth = (function (ctx) {
     };
   }();
 
-  resourse.checkForgotToken = function () {
+  controller.checkForgotToken = function () {
     var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee5(req, res) {
       var forgotEmailToken, criteria, userToken;
       return _regeneratorRuntime.wrap(function _callee5$(_context5) {
@@ -751,14 +764,14 @@ var Auth = (function (ctx) {
     };
   }();
 
-  resourse.reset = function () {
+  controller.reset = function () {
     var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee6(req, res) {
       var params, password, checkPassword, captcha, forgotEmailToken, criteria, userToken, userID, user;
       return _regeneratorRuntime.wrap(function _callee6$(_context6) {
         while (1) {
           switch (_context6.prev = _context6.next) {
             case 0:
-              params = resourse.getUserFields(req, res);
+              params = controller.getUserFields(req, res);
               password = params.password, checkPassword = params.checkPassword, captcha = params.captcha, forgotEmailToken = params.forgotEmailToken;
 
               if (password) {
@@ -860,7 +873,7 @@ var Auth = (function (ctx) {
     };
   }();
 
-  resourse.getToken = function (req) {
+  controller.getToken = function (req) {
     if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
       return req.headers.authorization.split(' ')[1];
     } else if (req.headers['x-access-token']) {
@@ -874,13 +887,13 @@ var Auth = (function (ctx) {
     return null;
   };
 
-  resourse.parseToken = function (req, res, next) {
-    var token = resourse.getToken(req);
+  controller.parseToken = function (req, res, next) {
+    var token = controller.getToken(req);
     req.token = token;
     next();
   };
 
-  resourse.parseUser = function (req, res, next) {
+  controller.parseUser = function (req, res, next) {
     var options = {
       secret: ctx.config && ctx.config.jwt.secret || 'SECRET',
       getToken: function getToken(req) {
@@ -893,22 +906,22 @@ var Auth = (function (ctx) {
     });
   };
 
-  resourse.isAuth = function (req, res, next) {
+  controller.isAuth = function (req, res, next) {
     if (req._errJwt) return next(req._errJwt);
     if (!req.user || !req.user._id) return res.status(401).send('!req.user');
     next();
   };
 
-  return resourse;
+  return controller;
 });
 
 var Domain$1 = (function (ctx) {
   var User = ctx.models.User;
   var Domain = ctx.models.Domain;
 
-  var resourse = {};
+  var controller = {};
 
-  resourse.domains = function () {
+  controller.domains = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(req, res) {
       var userID, user;
       return _regeneratorRuntime.wrap(function _callee$(_context) {
@@ -936,7 +949,7 @@ var Domain$1 = (function (ctx) {
     };
   }();
 
-  resourse.create = function () {
+  controller.create = function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(req, res) {
       var params, url, channels, userID, user, domain;
       return _regeneratorRuntime.wrap(function _callee2$(_context2) {
@@ -958,7 +971,7 @@ var Domain$1 = (function (ctx) {
                 break;
               }
 
-              return _context2.abrupt('return', res.status(400).json([{ signup: false, message: 'Домен не передан' }]));
+              return _context2.abrupt('return', res.status(400).json([{ signup: false, message: 'Каналы не переданы' }]));
 
             case 5:
               url = params.url, channels = params.channels;
@@ -990,7 +1003,7 @@ var Domain$1 = (function (ctx) {
     };
   }();
 
-  resourse.edit = function () {
+  controller.edit = function () {
     var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3(req, res) {
       var params, url, id, userID, user;
       return _regeneratorRuntime.wrap(function _callee3$(_context3) {
@@ -1045,7 +1058,7 @@ var Domain$1 = (function (ctx) {
     };
   }();
 
-  resourse.delete = function () {
+  controller.delete = function () {
     var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee4(req, res) {
       var id, userID, user;
       return _regeneratorRuntime.wrap(function _callee4$(_context4) {
@@ -1090,7 +1103,7 @@ var Domain$1 = (function (ctx) {
     };
   }();
 
-  resourse.logs = function () {
+  controller.logs = function () {
     var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee5(req, res) {
       var domainId, userID, user, domain, logs;
       return _regeneratorRuntime.wrap(function _callee5$(_context5) {
@@ -1140,106 +1153,7 @@ var Domain$1 = (function (ctx) {
     };
   }();
 
-  return resourse;
-});
-
-var Account = (function (ctx) {
-  var User = ctx.models.User;
-  var Domain = ctx.models.Domain;
-
-  var resourse = {};
-
-  resourse.changePassword = function () {
-    var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(req, res) {
-      var _req$body, password, repeatPassword, userID, user;
-
-      return _regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _req$body = req.body, password = _req$body.password, repeatPassword = _req$body.repeatPassword;
-
-              if (!(!password || !repeatPassword)) {
-                _context.next = 3;
-                break;
-              }
-
-              return _context.abrupt("return", res.status(404).json([{ flag: false, message: "Вы не передали все данные" }]));
-
-            case 3:
-              if (!(password !== repeatPassword)) {
-                _context.next = 5;
-                break;
-              }
-
-              return _context.abrupt("return", res.status(404).json([{ flag: false, message: "Пароли не совпадают" }]));
-
-            case 5:
-              userID = req.user.id;
-              _context.next = 8;
-              return User.findOne({ id: userID });
-
-            case 8:
-              user = _context.sent;
-
-              user.password = password;
-              _context.next = 12;
-              return user.save();
-
-            case 12:
-              return _context.abrupt("return", res.json([{ flag: true, message: 'Пароль успешно изменен' }]));
-
-            case 13:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function (_x, _x2) {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  resourse.channels = function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(req, res) {
-      var userID, user;
-      return _regeneratorRuntime.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              userID = req.user.id;
-              _context2.next = 3;
-              return User.findOne({ id: userID });
-
-            case 3:
-              user = _context2.sent;
-
-              if (user) {
-                _context2.next = 6;
-                break;
-              }
-
-              return _context2.abrupt("return", res.status(404).json([{ flag: false, message: "Пользователь не найден" }]));
-
-            case 6:
-              return _context2.abrupt("return", res.json(user.channels));
-
-            case 7:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2, this);
-    }));
-
-    return function (_x3, _x4) {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-
-  return resourse;
+  return controller;
 });
 
 var Channel$1 = (function (ctx) {
@@ -1435,74 +1349,76 @@ var Channel$1 = (function (ctx) {
   return controller;
 });
 
-var _getResourses = function () {
+var _getControllers = function () {
   return {
     Auth: Auth.apply(undefined, arguments),
     Domain: Domain$1.apply(undefined, arguments),
-    Account: Account.apply(undefined, arguments),
     Channel: Channel$1.apply(undefined, arguments)
   };
 };
 
+var Transporter = (function (ctx) {
+  if (!ctx.log) throw '!log';
+
+  var transporter = nodemailer.createTransport(smtpTransport(ctx.config.nodemailer));
+
+  return transporter;
+});
+
+var _getUtils = function () {
+  return {
+    Transporter: Transporter.apply(undefined, arguments)
+  };
+};
+
 var getAuth = (function (ctx) {
-  if (!_.has(ctx, 'resourses.Auth.signup')) throw '!resourses.Auth.signup';
-  if (!_.has(ctx, 'resourses.Auth.login')) throw '!resourses.Auth.login';
-  if (!_.has(ctx, 'resourses.Auth.validate')) throw '!resourses.Auth.validate';
-  if (!_.has(ctx, 'resourses.Auth.forgot')) throw '!resourses.Auth.forgot';
-  if (!_.has(ctx, 'resourses.Auth.checkForgotToken')) throw '!resourses.Auth.checkForgotToken';
-  if (!_.has(ctx, 'resourses.Auth.reset')) throw '!resourses.Auth.reset';
+  if (!_.has(ctx, 'controllers.Auth.signup')) throw '!controllers.Auth.signup';
+  if (!_.has(ctx, 'controllers.Auth.login')) throw '!controllers.Auth.login';
+  if (!_.has(ctx, 'controllers.Auth.validate')) throw '!controllers.Auth.validate';
+  if (!_.has(ctx, 'controllers.Auth.forgot')) throw '!controllers.Auth.forgot';
+  if (!_.has(ctx, 'controllers.Auth.checkForgotToken')) throw '!controllers.Auth.checkForgotToken';
+  if (!_.has(ctx, 'controllers.Auth.reset')) throw '!controllers.Auth.reset';
+
   var api = expressAsyncRouter.AsyncRouter();
 
-  api.all('/validate', ctx.resourses.Auth.validate);
-  api.post('/signup', ctx.resourses.Auth.signup);
-  api.post('/login', ctx.resourses.Auth.login);
-  api.post('/forgot', ctx.resourses.Auth.forgot);
-  api.get('/forgot/:forgotEmailToken', ctx.resourses.Auth.checkForgotToken);
-  api.post('/reset', ctx.resourses.Auth.reset);
+  api.all('/validate', ctx.controllers.Auth.validate);
+  api.post('/signup', ctx.controllers.Auth.signup);
+  api.post('/login', ctx.controllers.Auth.login);
+  api.post('/forgot', ctx.controllers.Auth.forgot);
+  api.get('/forgot/:forgotEmailToken', ctx.controllers.Auth.checkForgotToken);
+  api.post('/reset', ctx.controllers.Auth.reset);
 
   return api;
 });
 
 var getDomain = (function (ctx) {
-  if (!_.has(ctx, 'resourses.Domain.domains')) throw '!resourses.Domain.domains';
-  if (!_.has(ctx, 'resourses.Domain.create')) throw '!resourses.Domain.create';
-  if (!_.has(ctx, 'resourses.Domain.delete')) throw '!resourses.Domain.delete';
-  if (!_.has(ctx, 'resourses.Domain.edit')) throw '!resourses.Domain.edit';
-  if (!_.has(ctx, 'resourses.Domain.edit')) throw '!resourses.Domain.logs';
+  if (!_.has(ctx, 'controllers.Domain.domains')) throw '!controllers.Domain.domains';
+  if (!_.has(ctx, 'controllers.Domain.create')) throw '!controllers.Domain.create';
+  if (!_.has(ctx, 'controllers.Domain.delete')) throw '!controllers.Domain.delete';
+  if (!_.has(ctx, 'controllers.Domain.edit')) throw '!controllers.Domain.edit';
+  if (!_.has(ctx, 'controllers.Domain.logs')) throw '!controllers.Domain.logs';
 
   var api = expressAsyncRouter.AsyncRouter();
 
-  api.get('/', ctx.resourses.Domain.domains);
-  api.post('/create', ctx.resourses.Domain.create);
-  api.delete('/delete/:id', ctx.resourses.Domain.delete);
-  api.put('/edit', ctx.resourses.Domain.edit);
-  api.get('/:domainId/logs', ctx.resourses.Domain.logs);
+  api.get('/', ctx.controllers.Domain.domains);
+  api.post('/', ctx.controllers.Domain.create);
+  api.delete('/:id', ctx.controllers.Domain.delete);
+  api.put('/', ctx.controllers.Domain.edit);
+  api.get('/:domainId/logs', ctx.controllers.Domain.logs);
 
   return api;
 });
 
 var getChannel = (function (ctx) {
-  if (!_.has(ctx, 'resourses.Channel.getChannels')) throw '!resourses.Channel.getChannels';
-  if (!_.has(ctx, 'resourses.Channel.create')) throw '!resourses.Channel.create';
+  if (!_.has(ctx, 'controllers.Channel.getChannels')) throw '!controllers.Channel.getChannels';
+  if (!_.has(ctx, 'controllers.Channel.create')) throw '!controllers.Channel.create';
 
   var api = expressAsyncRouter.AsyncRouter();
 
-  api.get('/', ctx.resourses.Channel.getChannels);
-  api.post('/create', ctx.resourses.Channel.create);
-  api.put('/edit', ctx.resourses.Channel.edit);
-  api.delete('/delete/:id', ctx.resourses.Channel.delete);
-
-  return api;
-});
-
-var getAccount = (function (ctx) {
-  if (!_.has(ctx, 'resourses.Account.changePassword')) throw '!resourses.Account.changePassword';
-  if (!_.has(ctx, 'resourses.Account.channels')) throw '!resourses.Account.channels';
-
-  var api = expressAsyncRouter.AsyncRouter();
-
-  api.post('/changePassword', ctx.resourses.Account.changePassword);
-  api.get('/channels', ctx.resourses.Account.channels);
+  api.get('/', ctx.controllers.Channel.getChannels);
+  api.post('/', ctx.controllers.Channel.create);
+  api.put('/', ctx.controllers.Channel.edit);
+  api.delete('/:id', ctx.controllers.Channel.delete);
 
   return api;
 });
@@ -1517,11 +1433,6 @@ var getApi = (function (ctx) {
 	api.use('/auth', getAuth(ctx));
 	api.use('/domains', expressJwt({ secret: ctx.config.jwt.secret }), getDomain(ctx));
 	api.use('/channels', expressJwt({ secret: ctx.config.jwt.secret }), getChannel(ctx));
-	api.use('/account', expressJwt({ secret: ctx.config.jwt.secret }), getAccount(ctx));
-
-	// api.use('/domains',(function(err, req, res, next) {
-	// 	return res.status(401).json([{flag: false, message: 'Неправильный токен'}]);
-	// }))
 
 	api.use('/', function (err, req, res, next) {
 		return res.status(401).json([{ flag: false, message: 'Не авторизован' }]);
@@ -1575,25 +1486,33 @@ var App = function () {
       };
     }
   }, {
-    key: 'getResourses',
-    value: function getResourses() {
-      return _getResourses(this);
+    key: 'getControllers',
+    value: function getControllers() {
+      return _getControllers(this);
+    }
+  }, {
+    key: 'getUtils',
+    value: function getUtils() {
+      return _getUtils(this);
     }
   }, {
     key: 'init',
     value: function init() {
       this.log.trace('App init');
-      var transporter = nodemailer.createTransport(smtpTransport(this.config.nodemailer));
-      this.transporter = transporter;
-
       this.app = express();
       this.db = this.getDatabase();
+
+      this.utils = this.getUtils();
+      this.log.trace('utils', _Object$keys(this.utils));
+
       this.middlewares = this.getMiddlewares();
       this.log.trace('middlewares', _Object$keys(this.middlewares));
+
       this.models = this.getModels();
       this.log.trace('models', _Object$keys(this.models));
-      this.resourses = this.getResourses();
-      this.log.trace('resourses', _Object$keys(this.resourses));
+
+      this.controllers = this.getControllers();
+      this.log.trace('controllers', _Object$keys(this.controllers));
 
       this.useMiddlewares();
       this.useRoutes();
@@ -1606,8 +1525,9 @@ var App = function () {
       this.app.use(this.middlewares.reqLog);
       this.app.use(this.middlewares.accessLogger);
       this.app.use(this.middlewares.reqParser);
-      this.app.use(this.resourses.Auth.parseToken);
-      this.app.use(this.resourses.Auth.parseUser);
+
+      this.app.use(this.controllers.Auth.parseToken);
+      this.app.use(this.controllers.Auth.parseUser);
     }
   }, {
     key: 'useRoutes',
